@@ -1,0 +1,117 @@
+.scene-instruction {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  animation: slideDown 0.5s ease-out;
+  pointer-events: none;
+  width: 90%;
+  max-width: 400px;
+}
+
+.instruction-content {
+  background: linear-gradient(135deg, rgba(128, 0, 0, 0.95) 0%, rgba(165, 42, 42, 0.95) 100%);
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffd700;
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.instruction-content p {
+  margin: 0;
+  flex: 1;
+}
+
+.instruction-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s;
+  flex-shrink: 0;
+}
+
+.instruction-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.instruction-hint-btn {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #800000 0%, #a52a2a 100%);
+  border: 2px solid #ffd700;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s;
+  animation: pulse 2s infinite;
+}
+
+.instruction-hint-btn:hover {
+  transform: scale(1.1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.5);
+  }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .scene-instruction {
+    top: 70px;
+    width: 95%;
+  }
+  
+  .instruction-content {
+    font-size: 0.95rem;
+    padding: 0.9rem 1.2rem;
+  }
+  
+  .instruction-hint-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+    top: 70px;
+    right: 15px;
+  }
+}

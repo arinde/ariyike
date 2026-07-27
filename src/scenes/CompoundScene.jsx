@@ -3,17 +3,24 @@ import { useFrame } from '@react-three/fiber'
 import { Plane, Box, Cylinder, Sphere } from '@react-three/drei'
 import Character from '../components/Character/Character'
 
-const CompoundScene = forwardRef(({ avatarUrl, onReachWalkway }, ref) => {
+const CompoundScene = forwardRef(({ avatarUrl, onReachWalkway, onReachGate, dialogShown }, ref) => {
   const [characterPosition, setCharacterPosition] = useState([0, 0, 8])
   const [characterRotation, setCharacterRotation] = useState(0)
   const [isMoving, setIsMoving] = useState(false)
   const [showHint, setShowHint] = useState(true)
   
   const walkwayTriggerZ = 3
+  const gateTriggerZ = 5 // Show dialog when reaching the gate area
   
-  // Check if reached walkway
+  // Check triggers
   useFrame(() => {
-    if (characterPosition[2] <= walkwayTriggerZ) {
+    // Check if reached gate area (show dialog)
+    if (characterPosition[2] <= gateTriggerZ && !dialogShown && onReachGate) {
+      onReachGate()
+    }
+    
+    // Check if reached walkway transition
+    if (characterPosition[2] <= walkwayTriggerZ && dialogShown) {
       onReachWalkway()
     }
   })

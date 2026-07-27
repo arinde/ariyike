@@ -9,6 +9,7 @@ import WalkwayScene from './scenes/WalkwayScene'
 import DoorScene from './scenes/DoorScene'
 import MainRoom from './scenes/MainRoom'
 import PhotoShootScene from './scenes/PhotoShootScene'
+import PartyScene from './scenes/PartyScene'
 
 // Dialogs
 import {
@@ -24,6 +25,7 @@ import PosterGenerator from './components/Poster/PosterGenerator'
 
 // UI
 import MobileControls from './components/UI/MobileControls'
+import SceneInstructions from './components/UI/SceneInstructions'
 
 import './styles/global.css'
 
@@ -50,6 +52,13 @@ function App() {
   const [cakeCut, setCakeCut] = useState(false)
   const [selectedPose, setSelectedPose] = useState(null)
   const [showPoster, setShowPoster] = useState(false)
+  const [showParty, setShowParty] = useState(false)
+  
+  // Dialog triggers - walk first, then dialog
+  const [showWishDialog, setShowWishDialog] = useState(false)
+  const [showAgeDialog, setShowAgeDialog] = useState(false)
+  const [compoundDialogShown, setCompoundDialogShown] = useState(false)
+  const [walkwayDialogShown, setWalkwayDialogShown] = useState(false)
   
   const sceneRef = useRef(null)
   const roomRef = useRef(null)
@@ -71,20 +80,33 @@ function App() {
     return () => clearInterval(interval)
   }, [])
   
-  // Scene event handlers
+  // Scene event handlers - NEW FLOW: Walk first, then dialogs
   const handleLoadingComplete = () => {
     goToScene('compound')
-    setTimeout(() => {
+    // Don't show dialog immediately - let them walk first
+  }
+  
+  // Called when character reaches the gate area in compound
+  const handleReachCompoundGate = () => {
+    if (!compoundDialogShown) {
+      setCompoundDialogShown(true)
+      setShowWishDialog(true)
       showDialog('wish')
-    }, 2000)
+    }
   }
   
   const handleReachWalkway = () => {
     goToScene('walkway')
+    // Age dialog will show after walking a bit in walkway
   }
   
-  const handleShowAgeDialog = () => {
-    showDialog('age')
+  // Called when character walks enough in walkway
+  const handleWalkwayProgress = () => {
+    if (!walkwayDialogShown) {
+      setWalkwayDialogShown(true)
+      setShowAgeDialog(true)
+      showDialog('age')
+    }
   }
   
   const handleReachDoor = () => {
@@ -123,6 +145,8 @@ function App() {
   
   const handleClosePoster = () => {
     setShowPoster(false)
+    setShowParty(true)
+    goToScene('party')
   }
   
   // Movement handlers
@@ -163,6 +187,8 @@ function App() {
         return [0, 5, 10]
       case 'photoshoot':
         return [0, 4, 6]
+      case 'party':
+        return [0, 6, 12]
       default:
         return [0, 5, 10]
     }
@@ -177,6 +203,8 @@ function App() {
             ref={sceneRef}
             avatarUrl={avatarUrl}
             onReachWalkway={handleReachWalkway}
+            onReachGate={handleReachCompoundGate}
+            dialogShown={compoundDialogShown}
           />
         )
       case 'walkway':
@@ -185,7 +213,8 @@ function App() {
             ref={sceneRef}
             avatarUrl={avatarUrl}
             onReachDoor={handleReachDoor}
-            onShowAgeDialog={handleShowAgeDialog}
+            onShowAgeDialog={handleWalkwayProgress}
+            dialogShown={walkwayDialogShown}
           />
         )
       case 'door':
@@ -211,6 +240,14 @@ function App() {
             avatarUrl={avatarUrl}
             selectedPose={selectedPose}
             onComplete={handlePhotoShootComplete}
+            onPoseChange={setSelectedPose}
+          />
+        )
+      case 'party':
+        return (
+          <PartyScene 
+            avatarUrl={avatarUrl}
+            userData={userData}
           />
         )
       default:
@@ -228,6 +265,8 @@ function App() {
       case 'livingroom':
       case 'photoshoot':
         return '#f5f5dc' // Cream for indoors
+      case 'party':
+        return '#1a0a2e' // Dark purple for party atmosphere
       default:
         return '#87ceeb'
     }
@@ -297,7 +336,7 @@ function App() {
           </Canvas>
           
           {/* Mobile Controls */}
-          {currentScene !== 'door' && currentScene !== 'photoshoot' && (
+          {currentScene !== 'door' && currentScene !== 'photoshoot' && currentScene !== 'party' && (
             <MobileControls 
               onMove={handleMove}
               onStop={handleStop}
@@ -305,6 +344,13 @@ function App() {
               onInteract={handleInteract}
             />
           )}
+          
+          {/* Scene Instructions */}
+          <SceneInstructions 
+            currentScene={currentScene}
+            showWishDialog={showWishDialog}
+            showAgeDialog={showAgeDialog}
+          />
         </>
       )}
       
