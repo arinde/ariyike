@@ -231,6 +231,48 @@ body {
   pointer-events: none;
 }
 
+/* Scene Loading Overlay */
+.scene-loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(135deg, #87ceeb 0%, #e0f6ff 50%, #f5f5dc 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1500;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.scene-loading-content {
+  text-align: center;
+}
+
+.scene-loading-spinner {
+  width: 80px;
+  height: 80px;
+  border: 6px solid #fff;
+  border-top-color: #800000;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 2rem;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.scene-loading-text {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.8rem;
+  color: #800000;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .loading-title {

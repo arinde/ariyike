@@ -1,0 +1,310 @@
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(5px);
+}
+
+.message-overlay {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+.dialog-box {
+  background: linear-gradient(135deg, #fff9f0 0%, #fff5e6 100%);
+  border-radius: 20px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease-out;
+  border: 3px solid #ffd700;
+}
+
+.dialog-box.large {
+  max-width: 600px;
+}
+
+.message-box {
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: linear-gradient(135deg, #fff9f0 0%, #ffe4c4 100%);
+}
+
+.message-scroll {
+  padding-right: 10px;
+}
+
+.message-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.message-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.message-scroll::-webkit-scrollbar-thumb {
+  background: #800000;
+  border-radius: 4px;
+}
+
+.dialog-character {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+
+.character-avatar {
+  font-size: 2.5rem;
+}
+
+.character-name {
+  font-weight: bold;
+  color: #800000;
+  font-size: 1.1rem;
+}
+
+.dialog-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #800000;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.message-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #800000;
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dialog-text {
+  color: #5d4037;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.dialog-question {
+  color: #800000;
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.dialog-input {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #d4a373;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  background: #fff;
+  color: #5d4037;
+  resize: none;
+  font-family: inherit;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.dialog-input:focus {
+  outline: none;
+  border-color: #800000;
+  box-shadow: 0 0 0 4px rgba(128, 0, 0, 0.1);
+}
+
+.age-input {
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.dialog-button {
+  width: 100%;
+  padding: 1rem 2rem;
+  margin-top: 1rem;
+  background: linear-gradient(135deg, #800000 0%, #a52a2a 100%);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 15px rgba(128, 0, 0, 0.3);
+}
+
+.dialog-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(128, 0, 0, 0.4);
+}
+
+.dialog-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dialog-buttons-row {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.dialog-buttons-row .dialog-button {
+  flex: 1;
+  margin-top: 0;
+}
+
+.dialog-button.secondary {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+}
+
+.dialog-button.secondary:hover {
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.pose-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.pose-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 1rem;
+  background: #fff;
+  border: 3px solid #d4a373;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.pose-button:hover {
+  border-color: #800000;
+  background: #fff9f0;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(128, 0, 0, 0.15);
+}
+
+.pose-emoji {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.pose-name {
+  font-weight: bold;
+  color: #800000;
+  font-size: 1.1rem;
+}
+
+.pose-description {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 0.3rem;
+}
+
+.message-content {
+  text-align: left;
+  color: #5d4037;
+  line-height: 1.8;
+}
+
+.message-paragraph {
+  margin-bottom: 1.2rem;
+  font-size: 1.1rem;
+}
+
+.wish-highlight {
+  background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+  padding: 1.5rem;
+  border-radius: 15px;
+  margin: 1.5rem 0;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.wish-label {
+  display: block;
+  font-weight: bold;
+  color: #800000;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.wish-text {
+  display: block;
+  font-style: italic;
+  color: #5d4037;
+  font-size: 1.3rem;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+.message-closing {
+  text-align: center;
+  font-style: italic;
+  color: #800000;
+  font-size: 1.1rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid #d4a373;
+}
+
+.continue-button {
+  margin-top: 2rem;
+  padding: 1.2rem 2rem;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .dialog-box {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+  
+  .dialog-title {
+    font-size: 1.5rem;
+  }
+  
+  .message-title {
+    font-size: 1.8rem;
+  }
+  
+  .pose-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .dialog-buttons-row {
+    flex-direction: column;
+  }
+}

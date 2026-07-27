@@ -1,25 +1,65 @@
-import { useState, useEffect, useRef } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { Canvas } from '@react-three/fiber'
+import { useGameState } from './hooks/useGameState'
+
+// Scenes
 import LoadingScene from './scenes/LoadingScene'
+import CompoundScene from './scenes/CompoundScene'
+import WalkwayScene from './scenes/WalkwayScene'
+import DoorScene from './scenes/DoorScene'
 import MainRoom from './scenes/MainRoom'
+import PhotoShootScene from './scenes/PhotoShootScene'
+
+// Dialogs
+import {
+  WishDialog,
+  AgeDialog,
+  PhotoShootDialog,
+  PoseSelector,
+  BirthdayMessageModal
+} from './components/Dialog/DialogModal'
+
+// Poster
+import PosterGenerator from './components/Poster/PosterGenerator'
+
+// UI
 import MobileControls from './components/UI/MobileControls'
+
 import './styles/global.css'
 
 function App() {
-  const [gameState, setGameState] = useState('loading') // loading, playing, celebration
+  const {
+    currentScene,
+    userData,
+    activeDialog,
+    isLoading,
+    loadingText,
+    goToScene,
+    updateUserData,
+    showDialog,
+    closeDialog,
+    submitWish,
+    submitAge,
+    startPhotoShoot,
+    skipPhotoShoot,
+    completePhotoShoot
+  } = useGameState()
+  
   const [avatarUrl, setAvatarUrl] = useState(null)
   const [showInteraction, setShowInteraction] = useState(false)
   const [cakeCut, setCakeCut] = useState(false)
-  const mainRoomRef = useRef(null)
-
+  const [selectedPose, setSelectedPose] = useState(null)
+  const [showPoster, setShowPoster] = useState(false)
+  
+  const sceneRef = useRef(null)
+  const roomRef = useRef(null)
+  
+  // Check for photo
   useEffect(() => {
-    // Check if photo exists
     const checkPhoto = async () => {
       try {
         const response = await fetch('/ariyike-photo.jpg')
         if (response.ok) {
-          // Photo exists - in real implementation, we'd send this to Ready Player Me
-          // For now, we'll use a placeholder avatar URL
           setAvatarUrl('https://models.readyplayer.me/649df122d87dd946d01647e6.glb')
         }
       } catch (e) {
@@ -27,107 +67,281 @@ function App() {
       }
     }
     checkPhoto()
-    
-    // Poll for photo every 2 seconds
     const interval = setInterval(checkPhoto, 2000)
     return () => clearInterval(interval)
   }, [])
-
+  
+  // Scene event handlers
   const handleLoadingComplete = () => {
-    setGameState('playing')
+    goToScene('compound')
+    setTimeout(() => {
+      showDialog('wish')
+    }, 2000)
   }
-
+  
+  const handleReachWalkway = () => {
+    goToScene('walkway')
+  }
+  
+  const handleShowAgeDialog = () => {
+    showDialog('age')
+  }
+  
+  const handleReachDoor = () => {
+    goToScene('door')
+  }
+  
+  const handleEnterHouse = () => {
+    goToScene('livingroom')
+  }
+  
   const handleCakeCut = () => {
     setCakeCut(true)
-    setGameState('celebration')
+    showDialog('message')
   }
-
+  
+  const handleMessageContinue = () => {
+    closeDialog()
+    showDialog('photoshoot')
+  }
+  
+  const handlePhotoShootYes = () => {
+    closeDialog()
+    showDialog('pose')
+  }
+  
+  const handlePoseSelect = (pose) => {
+    setSelectedPose(pose)
+    closeDialog()
+    goToScene('photoshoot')
+  }
+  
+  const handlePhotoShootComplete = () => {
+    completePhotoShoot(selectedPose)
+    setShowPoster(true)
+  }
+  
+  const handleClosePoster = () => {
+    setShowPoster(false)
+  }
+  
+  // Movement handlers
   const handleMove = (direction) => {
-    if (mainRoomRef.current) {
-      mainRoomRef.current.handleMove(direction)
+    if (sceneRef.current) {
+      sceneRef.current.handleMove(direction)
+    }
+    if (roomRef.current) {
+      roomRef.current.handleMove(direction)
     }
   }
-
+  
   const handleStop = () => {
-    if (mainRoomRef.current) {
-      mainRoomRef.current.handleStop()
+    if (sceneRef.current) {
+      sceneRef.current.handleStop()
+    }
+    if (roomRef.current) {
+      roomRef.current.handleStop()
     }
   }
-
+  
   const handleInteract = () => {
-    if (mainRoomRef.current && showInteraction && !cakeCut) {
-      mainRoomRef.current.handleCakeInteraction()
+    if (roomRef.current && showInteraction && !cakeCut) {
+      roomRef.current.handleCakeInteraction()
     }
   }
-
+  
+  // Camera positions for each scene
+  const getCameraPosition = () => {
+    switch(currentScene) {
+      case 'compound':
+        return [0, 8, 15]
+      case 'walkway':
+        return [0, 6, 10]
+      case 'door':
+        return [0, 3, 8]
+      case 'livingroom':
+        return [0, 5, 10]
+      case 'photoshoot':
+        return [0, 4, 6]
+      default:
+        return [0, 5, 10]
+    }
+  }
+  
+  // Render appropriate scene
+  const renderScene = () => {
+    switch(currentScene) {
+      case 'compound':
+        return (
+          <CompoundScene 
+            ref={sceneRef}
+            avatarUrl={avatarUrl}
+            onReachWalkway={handleReachWalkway}
+          />
+        )
+      case 'walkway':
+        return (
+          <WalkwayScene 
+            ref={sceneRef}
+            avatarUrl={avatarUrl}
+            onReachDoor={handleReachDoor}
+            onShowAgeDialog={handleShowAgeDialog}
+          />
+        )
+      case 'door':
+        return (
+          <DoorScene 
+            onEnterHouse={handleEnterHouse}
+          />
+        )
+      case 'livingroom':
+        return (
+          <MainRoom 
+            ref={roomRef}
+            gameState="playing"
+            avatarUrl={avatarUrl}
+            onCakeCut={handleCakeCut}
+            onShowInteractionChange={setShowInteraction}
+            cakeCut={cakeCut}
+          />
+        )
+      case 'photoshoot':
+        return (
+          <PhotoShootScene 
+            avatarUrl={avatarUrl}
+            selectedPose={selectedPose}
+            onComplete={handlePhotoShootComplete}
+          />
+        )
+      default:
+        return null
+    }
+  }
+  
+  // Get background color based on scene
+  const getBackgroundColor = () => {
+    switch(currentScene) {
+      case 'compound':
+      case 'walkway':
+      case 'door':
+        return '#87ceeb' // Sky blue for outdoors
+      case 'livingroom':
+      case 'photoshoot':
+        return '#f5f5dc' // Cream for indoors
+      default:
+        return '#87ceeb'
+    }
+  }
+  
   return (
     <div className="app">
-      {gameState === 'loading' && (
+      {/* Loading Screen */}
+      {currentScene === 'loading' && (
         <LoadingScene onComplete={handleLoadingComplete} />
       )}
       
-      {(gameState === 'playing' || gameState === 'celebration') && (
+      {/* Loading Overlay between scenes */}
+      {isLoading && (
+        <div className="scene-loading-overlay">
+          <div className="scene-loading-content">
+            <div className="scene-loading-spinner"></div>
+            <p className="scene-loading-text">{loadingText}</p>
+          </div>
+        </div>
+      )}
+      
+      {/* Main 3D Canvas */}
+      {!isLoading && currentScene !== 'loading' && (
         <>
           <Canvas
             shadows
-            camera={{ position: [0, 5, 10], fov: 50 }}
+            camera={{ 
+              position: getCameraPosition(), 
+              fov: 50 
+            }}
             gl={{ antialias: true, alpha: false }}
             style={{ width: '100vw', height: '100vh' }}
           >
-          <color attach="background" args={['#87ceeb']} />
-          <fog attach="fog" args={['#e0f6ff', 15, 60]} />
-          
-          {/* Bright ambient light - simulates daylight */}
-          <ambientLight intensity={0.7} color="#fff8dc" />
-          
-          {/* Main sunlight coming through window */}
-          <directionalLight
-            position={[-10, 8, 5]}
-            intensity={1.2}
-            color="#fff5e6"
-            castShadow
-            shadow-mapSize={2048}
-            shadow-camera-left={-10}
-            shadow-camera-right={10}
-            shadow-camera-top={10}
-            shadow-camera-bottom={-10}
-          />
-          
-          {/* Fill light from ceiling */}
-          <pointLight position={[0, 6, 0]} intensity={0.4} color="#fff8dc" distance={10} />
-          
-          {/* Warm light near the reading corner */}
-          <pointLight position={[-4, 3, -3]} intensity={0.3} color="#ffd700" distance={5} />
+            <color attach="background" args={[getBackgroundColor()]} />
+            <fog attach="fog" args={[getBackgroundColor(), 15, 60]} />
             
-            <MainRoom 
-              ref={mainRoomRef}
-              gameState={gameState}
-              avatarUrl={avatarUrl}
-              onCakeCut={handleCakeCut}
-              onShowInteractionChange={setShowInteraction}
-              cakeCut={cakeCut}
-            />
+            {/* Lighting */}
+            {currentScene === 'livingroom' || currentScene === 'photoshoot' ? (
+              // Indoor lighting
+              <>
+                <ambientLight intensity={0.7} color="#fff8dc" />
+                <directionalLight
+                  position={[-10, 8, 5]}
+                  intensity={1.2}
+                  color="#fff5e6"
+                  castShadow
+                  shadow-mapSize={2048}
+                />
+                <pointLight position={[0, 6, 0]} intensity={0.4} color="#fff8dc" distance={10} />
+              </>
+            ) : (
+              // Outdoor lighting
+              <>
+                <ambientLight intensity={0.8} color="#fff" />
+                <directionalLight
+                  position={[10, 20, 10]}
+                  intensity={1.5}
+                  color="#fff"
+                  castShadow
+                  shadow-mapSize={2048}
+                />
+              </>
+            )}
+            
+            {renderScene()}
           </Canvas>
           
-          {/* Mobile Controls - Outside of Canvas */}
-          <MobileControls 
-            onMove={handleMove}
-            onStop={handleStop}
-            showInteraction={showInteraction}
-            onInteract={handleInteract}
-          />
+          {/* Mobile Controls */}
+          {currentScene !== 'door' && currentScene !== 'photoshoot' && (
+            <MobileControls 
+              onMove={handleMove}
+              onStop={handleStop}
+              showInteraction={showInteraction}
+              onInteract={handleInteract}
+            />
+          )}
         </>
       )}
-
-      {gameState === 'celebration' && (
-        <div className="birthday-message">
-          <div className="message-content">
-            <h1>Happy Birthday, Ariyike!</h1>
-            <p>May your year be filled with wonderful stories,</p>
-            <p>cozy moments, and all the joy you bring to others.</p>
-            <p className="heart">📚✨🎂</p>
-          </div>
-        </div>
+      
+      {/* Dialogs */}
+      <WishDialog 
+        isOpen={activeDialog === 'wish'} 
+        onSubmit={submitWish}
+      />
+      
+      <AgeDialog 
+        isOpen={activeDialog === 'age'} 
+        onSubmit={submitAge}
+      />
+      
+      <BirthdayMessageModal 
+        isOpen={activeDialog === 'message'}
+        userData={userData}
+        onContinue={handleMessageContinue}
+      />
+      
+      <PhotoShootDialog 
+        isOpen={activeDialog === 'photoshoot'}
+        onYes={handlePhotoShootYes}
+        onNo={skipPhotoShoot}
+      />
+      
+      <PoseSelector 
+        isOpen={activeDialog === 'pose'}
+        onSelect={handlePoseSelect}
+      />
+      
+      {/* Poster Generator */}
+      {showPoster && (
+        <PosterGenerator 
+          userData={userData}
+          onClose={handleClosePoster}
+        />
       )}
     </div>
   )

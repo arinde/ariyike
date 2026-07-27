@@ -1,28 +1,95 @@
 import { useRef, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Box, Sphere, Cylinder, useGLTF } from '@react-three/drei'
+import { Box, Sphere, Cylinder } from '@react-three/drei'
 
-const Character = ({ position, rotation, isMoving, avatarUrl }) => {
+const Character = ({ position, rotation, isMoving, avatarUrl, pose }) => {
   const groupRef = useRef()
+  const leftArmRef = useRef()
+  const rightArmRef = useRef()
   const walkCycle = useRef(0)
   
-  // For MVP, we'll use a simple stylized character
-  // In production, you'd load the Ready Player Me avatar here
-  // const { scene } = useGLTF(avatarUrl || '/default-avatar.glb')
-  
   useFrame((state) => {
-    if (isMoving && groupRef.current) {
+    if (!groupRef.current) return
+    
+    // Handle pose animations
+    if (pose && !isMoving) {
+      const time = state.clock.elapsedTime
+      
+      switch(pose) {
+        case 'peace':
+          // Right arm up with peace sign
+          if (rightArmRef.current) {
+            rightArmRef.current.rotation.z = -2.5
+            rightArmRef.current.rotation.x = 0
+          }
+          if (leftArmRef.current) {
+            leftArmRef.current.rotation.z = 0
+          }
+          break
+          
+        case 'celebration':
+          // Both arms up
+          if (rightArmRef.current) {
+            rightArmRef.current.rotation.z = -2.8
+          }
+          if (leftArmRef.current) {
+            leftArmRef.current.rotation.z = 2.8
+          }
+          break
+          
+        case 'elegant':
+          // One hand on hip, one at side
+          if (rightArmRef.current) {
+            rightArmRef.current.rotation.z = -0.3
+            rightArmRef.current.rotation.x = 0.5
+          }
+          if (leftArmRef.current) {
+            leftArmRef.current.rotation.z = 0.5
+            leftArmRef.current.rotation.x = -0.3
+          }
+          break
+          
+        case 'smile':
+          // Natural standing, slight arm movement
+          if (rightArmRef.current) {
+            rightArmRef.current.rotation.z = -0.1 + Math.sin(time) * 0.05
+          }
+          if (leftArmRef.current) {
+            leftArmRef.current.rotation.z = 0.1 - Math.sin(time) * 0.05
+          }
+          break
+          
+        default:
+          // Idle breathing
+          groupRef.current.position.y = position[1] + Math.sin(time * 2) * 0.02
+          if (rightArmRef.current) rightArmRef.current.rotation.z = 0
+          if (leftArmRef.current) leftArmRef.current.rotation.z = 0
+      }
+    } else if (isMoving) {
+      // Walking animation
       walkCycle.current += 0.15
-      // Bobbing motion for walking
       groupRef.current.position.y = position[1] + Math.sin(walkCycle.current) * 0.05
+      
       // Arm swing
-      groupRef.current.children[2].rotation.x = Math.sin(walkCycle.current) * 0.5
-      groupRef.current.children[3].rotation.x = -Math.sin(walkCycle.current) * 0.5
-    } else if (groupRef.current) {
+      if (rightArmRef.current) {
+        rightArmRef.current.rotation.z = 0
+        rightArmRef.current.rotation.x = Math.sin(walkCycle.current) * 0.5
+      }
+      if (leftArmRef.current) {
+        leftArmRef.current.rotation.z = 0
+        leftArmRef.current.rotation.x = -Math.sin(walkCycle.current) * 0.5
+      }
+    } else {
       // Idle breathing
       groupRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime * 2) * 0.02
-      groupRef.current.children[2].rotation.x = 0
-      groupRef.current.children[3].rotation.x = 0
+      if (rightArmRef.current) {
+        rightArmRef.current.rotation.z = 0
+        rightArmRef.current.rotation.x = 0
+      }
+      if (leftArmRef.current) {
+        leftArmRef.current.rotation.z = 0
+        leftArmRef.current.rotation.x = 0
+      }
     }
   })
 
@@ -45,9 +112,9 @@ const Character = ({ position, rotation, isMoving, avatarUrl }) => {
         <meshStandardMaterial color="#fdbcb4" />
       </Sphere>
       
-      {/* Arms */}
+      {/* Arms with refs for animation */}
       <Box 
-        ref={(el) => { if (groupRef.current) groupRef.current.children[2] = el }}
+        ref={leftArmRef}
         args={[0.12, 0.6, 0.12]} 
         position={[-0.35, 1.1, 0]} 
         castShadow
@@ -55,7 +122,7 @@ const Character = ({ position, rotation, isMoving, avatarUrl }) => {
         <meshStandardMaterial color="#800000" />
       </Box>
       <Box 
-        ref={(el) => { if (groupRef.current) groupRef.current.children[3] = el }}
+        ref={rightArmRef}
         args={[0.12, 0.6, 0.12]} 
         position={[0.35, 1.1, 0]} 
         castShadow
@@ -80,6 +147,21 @@ const Character = ({ position, rotation, isMoving, avatarUrl }) => {
       <Box args={[0.2, 0.08, 0.02]} position={[0, 1.3, 0.16]}>
         <meshStandardMaterial color="#ffd700" />
       </Box>
+      
+      {/* Pose indicator - Peace sign hand */}
+      {pose === 'peace' && (
+        <group position={[0.5, 2, 0.2]}>
+          <Box args={[0.08, 0.2, 0.08]}>
+            <meshStandardMaterial color="#fdbcb4" />
+          </Box>
+          <Box args={[0.03, 0.12, 0.03]} position={[-0.03, 0.15, 0]}>
+            <meshStandardMaterial color="#fdbcb4" />
+          </Box>
+          <Box args={[0.03, 0.12, 0.03]} position={[0.03, 0.15, 0]}>
+            <meshStandardMaterial color="#fdbcb4" />
+          </Box>
+        </group>
+      )}
     </group>
   )
 }

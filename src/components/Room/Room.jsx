@@ -1,9 +1,54 @@
 import { useRef } from 'react'
 import { Box, Plane, Cylinder } from '@react-three/drei'
+import PhotoFrame from './PhotoFrame'
 
 const Room = () => {
   return (
     <group>
+      {/* ==================== PHOTO FRAMES WITH HER PICTURES ==================== */}
+      
+      {/* Main photo - Center of back wall */}
+      <PhotoFrame 
+        position={[0, 3.5, -5.9]}
+        rotation={[0, 0, 0]}
+        imageUrl="/ariyike-photo.jpg"
+        frameStyle="golden"
+        size={[2, 2.5]}
+      />
+      
+      {/* Left wall photos */}
+      <PhotoFrame 
+        position={[-5.9, 4, -2]}
+        rotation={[0, Math.PI / 2, 0]}
+        imageUrl="/ariyike-photo.jpg"
+        frameStyle="wooden"
+        size={[1.5, 2]}
+      />
+      
+      <PhotoFrame 
+        position={[-5.9, 3, 2]}
+        rotation={[0, Math.PI / 2, 0]}
+        imageUrl="/ariyike-photo.jpg"
+        frameStyle="white"
+        size={[1.2, 1.6]}
+      />
+      
+      {/* Right wall photos */}
+      <PhotoFrame 
+        position={[5.9, 4, -1]}
+        rotation={[0, -Math.PI / 2, 0]}
+        imageUrl="/ariyike-photo.jpg"
+        frameStyle="modern"
+        size={[1.8, 1.4]}
+      />
+      
+      <PhotoFrame 
+        position={[5.9, 3, 3]}
+        rotation={[0, -Math.PI / 2, 0]}
+        imageUrl="/ariyike-photo.jpg"
+        frameStyle="golden"
+        size={[1.4, 1.8]}
+      />
       {/* ==================== WALLS - Cream color for brightness ==================== */}
       
       {/* Back Wall */}
