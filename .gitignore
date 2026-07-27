@@ -23,8 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Ariyike's photo (don't commit personal photos)
-public/ariyike-photo.jpg
+
 
 # Environment variables
 .env
