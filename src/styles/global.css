@@ -5,9 +5,9 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
   overflow: hidden;
-  background: #1a0f0f;
+  background: #87ceeb;
   touch-action: none;
 }
 
@@ -24,7 +24,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(135deg, #800000 0%, #3e2723 50%, #1a0f0f 100%);
+  background: linear-gradient(135deg, #87ceeb 0%, #e0f6ff 50%, #f5f5dc 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -41,42 +41,43 @@ body {
 .loading-title {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 2.5rem;
-  color: #f5e6d3;
+  color: #2c3e50;
   text-align: center;
   margin-bottom: 2rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.5);
   animation: pulse 2s ease-in-out infinite;
 }
 
 .loading-text {
   font-size: 1.2rem;
-  color: #ffd4a3;
+  color: #5d4037;
   margin-bottom: 2rem;
 }
 
 .photo-upload {
   width: 200px;
   height: 250px;
-  border: 3px dashed #ffd4a3;
+  border: 3px dashed #800000;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.8);
   margin-bottom: 2rem;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .photo-upload.has-photo {
   border-color: #4caf50;
-  background: rgba(76, 175, 80, 0.2);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .photo-placeholder {
   text-align: center;
-  color: #f5e6d3;
+  color: #5d4037;
   padding: 1rem;
 }
 
@@ -94,19 +95,19 @@ body {
 .start-button {
   padding: 1rem 2rem;
   font-size: 1.2rem;
-  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
+  background: linear-gradient(135deg, #800000 0%, #a52a2a 100%);
   border: none;
   border-radius: 50px;
-  color: #3e2723;
+  color: #ffffff;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  box-shadow: 0 4px 15px rgba(128, 0, 0, 0.4);
 }
 
 .start-button:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+  box-shadow: 0 6px 20px rgba(128, 0, 0, 0.6);
 }
 
 .start-button:disabled {

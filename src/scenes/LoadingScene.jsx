@@ -48,8 +48,10 @@ const LoadingScene = ({ onComplete }) => {
   }
 
   return (
-    <div className={`loading-screen ${fadeOut ? 'fade-out' : ''}`}>
-      <h1 className="loading-title">Ariyike's Birthday</h1>
+    <div className={`loading-screen ${fadeOut ? 'fade-out' : ''}`} style={{
+      background: 'linear-gradient(135deg, #87ceeb 0%, #e0f6ff 50%, #f5f5dc 100%)'
+    }}>
+      <h1 className="loading-title" style={{ color: '#2c3e50' }}>Ariyike's Birthday</h1>
       
       <div className={`photo-upload ${photoLoaded ? 'has-photo' : ''}`}>
         {photoLoaded ? (

@@ -74,18 +74,30 @@ function App() {
             gl={{ antialias: true, alpha: false }}
             style={{ width: '100vw', height: '100vh' }}
           >
-            <color attach="background" args={['#1a0f0f']} />
-            <fog attach="fog" args={['#1a0f0f', 10, 50]} />
-            
-            <ambientLight intensity={0.4} color="#ffd4a3" />
-            <directionalLight
-              position={[5, 10, 5]}
-              intensity={1}
-              color="#ffecd2"
-              castShadow
-              shadow-mapSize={1024}
-            />
-            <pointLight position={[0, 3, 0]} intensity={0.8} color="#ff6b35" />
+          <color attach="background" args={['#87ceeb']} />
+          <fog attach="fog" args={['#e0f6ff', 15, 60]} />
+          
+          {/* Bright ambient light - simulates daylight */}
+          <ambientLight intensity={0.7} color="#fff8dc" />
+          
+          {/* Main sunlight coming through window */}
+          <directionalLight
+            position={[-10, 8, 5]}
+            intensity={1.2}
+            color="#fff5e6"
+            castShadow
+            shadow-mapSize={2048}
+            shadow-camera-left={-10}
+            shadow-camera-right={10}
+            shadow-camera-top={10}
+            shadow-camera-bottom={-10}
+          />
+          
+          {/* Fill light from ceiling */}
+          <pointLight position={[0, 6, 0]} intensity={0.4} color="#fff8dc" distance={10} />
+          
+          {/* Warm light near the reading corner */}
+          <pointLight position={[-4, 3, -3]} intensity={0.3} color="#ffd700" distance={5} />
             
             <MainRoom 
               ref={mainRoomRef}
